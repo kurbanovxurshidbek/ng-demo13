@@ -54,6 +54,23 @@ class Network {
     return null;
   }
 
+  static Future<String?> MUL(String api, Map<String, String> filePaths, Map<String, String> params) async {
+    var uri = Uri.https(getServer(), api); // http or https
+    var request = MultipartRequest('POST', uri);
+
+    filePaths.forEach((key, value) async {
+      request.files.add(await MultipartFile.fromPath(key, value));
+    });
+    request.fields.addAll(params);
+
+    StreamedResponse streamedResponse = await request.send();
+    var response = await Response.fromStream(streamedResponse);
+    if (response.statusCode == 200) {
+      return response.body;
+    }
+    return null;
+  }
+
   /* Http Apis*/
   static String API_POST_LIST = "/posts";
   static String API_POST_CREATE = "/posts";
